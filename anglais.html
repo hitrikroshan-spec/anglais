@@ -1,1 +1,663 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>English — Pro</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0284c7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root { 
+            --primary: #0284c7; 
+            --glam: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); 
+            --bg: #f8fafc; 
+            --text: #1e293b; 
+        }
+        
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: #e2e8f0; 
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            color: var(--text); 
+            overscroll-behavior: none; 
+            direction: ltr; 
+        }
+
+        .iphone-xs-screen { 
+            width: 100%; 
+            max-width: 400px; 
+            height: 100vh; 
+            background: var(--bg); 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden; 
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1); 
+        }
+        
+        header { 
+            background: var(--glam); 
+            color: white; 
+            padding: 50px 15px 15px; 
+            text-align: center; 
+            font-weight: bold; 
+            font-size: 1.4rem; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            z-index: 10;
+        }
+
+        .content { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 15px; 
+            padding-bottom: 110px; 
+            z-index: 1;
+        }
+
+        .hidden { display: none !important; }
+
+        /* FILTER BAR */
+        .filter-bar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-filter {
+            flex: 1;
+            min-width: 65px;
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 10px 6px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: #64748b;
+            text-align: center;
+        }
+
+        .btn-filter.active {
+            background: var(--glam);
+            color: white;
+            border: none;
+        }
+
+        .btn-quiz-toggle {
+            background: #f59e0b;
+            color: white;
+            border: none;
+        }
+        .btn-quiz-toggle.active {
+            background: #d97706;
+        }
+
+        /* ALPHABET GRID */
+        .alphabet-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .mini-card { 
+            background: white; 
+            border-radius: 14px; 
+            border: 1px solid #e2e8f0; 
+            text-align: center; 
+            padding: 15px;
+        }
+
+        .letter-main { 
+            font-size: 2.5rem; 
+            font-weight: bold; 
+            display: block;
+            line-height: 1.1;
+        }
+
+        .letter-pron {
+            font-size: 0.9rem;
+            color: #64748b;
+            font-weight: 600;
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* CARD ROWS */
+        .form-card-row {
+            background: white;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 10px;
+        }
+
+        .cases-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            text-align: center;
+        }
+
+        .case-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .case-label { font-size: 0.75rem; color: #94a3b8; display: block; }
+        .case-glyph { font-size: 1.8rem; font-weight: bold; color: #1e293b; }
+
+        /* DIALOGUES STYLE (Chat UI) */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 14px;
+        }
+
+        .bubble {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .bubble.left {
+            background: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .bubble.right {
+            background: #e0f2fe;
+            color: #0369a1;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bubble .translation {
+            display: block;
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .bubble .speaker {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* QUIZ AREA */
+        .quiz-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        
+        .quiz-question { font-size: 4rem; font-weight: bold; color: #0284c7; margin: 10px 0; }
+        .quiz-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px; }
+        .btn-option { background: #f8fafc; border: 2px solid #e2e8f0; padding: 14px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+
+        /* EDITOR */
+        .word-editor-container { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+        .word-toolbar { background: #ffffff; border-bottom: 1px solid #cbd5e1; padding: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+        .btn-word-tool { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 10px; font-size: 0.95rem; font-weight: bold; height: 32px; }
+        .editor-box { width: 100%; height: 200px; border: none; padding: 16px; font-size: 1.2rem; background: #ffffff; box-sizing: border-box; overflow-y: auto; }
+
+        /* SAVED NOTES */
+        .note-paper { background: white; border-radius: 14px; padding: 14px; margin-bottom: 12px; border-left: 5px solid var(--primary); display: flex; flex-direction: column; gap: 8px; }
+        .btn-note-opt { border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; cursor: pointer; }
+        .btn-load { background: #e0f2fe; color: #0369a1; }
+        .btn-trash { background: #fee2e2; color: #b91c1c; }
+
+        /* FORMS & INPUTS */
+        .form-card { background: white; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
+        .textbox { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 16px; box-sizing: border-box; background: #f8fafc; }
+        .btn-action { background: var(--glam); color: white; border: none; padding: 14px; width: 100%; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; }
+
+        /* DICTIONARY */
+        .word-item { background: white; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px; }
+        .word-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .word-col { flex: 1; text-align: center; }
+        .word-english { font-size: 1.6rem; color: var(--primary); font-weight: bold; }
+        .word-sens { font-size: 1.2rem; color: #0f172a; font-weight: bold; }
+        .word-thumb { max-width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
+        .btn-delete { background: #fee2e2; border: none; color: #ef4444; padding: 8px 12px; border-radius: 8px; font-weight: bold; }
+
+        .accent-info-text { background: white; padding: 12px; border-radius: 10px; text-align: center; margin-bottom: 15px; font-weight: bold; color: #475569; border: 1px dashed #cbd5e1; }
+
+        /* NAVIGATION BAR */
+        .taskbar {
+            position: absolute; bottom: 22px; left: 0; right: 0; height: 60px;
+            background: white; border-top: 1px solid #e2e8f0;
+            display: flex; align-items: center; justify-content: space-around; z-index: 99;
+        }
+
+        .task-item {
+            flex: 1; height: 100%; text-align: center; background: none; border: none;
+            color: #94a3b8; font-size: 0.8rem; font-weight: bold; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        .task-item.active { color: var(--primary); }
+        .footer-copyright { position: absolute; bottom: 0; left: 0; right: 0; height: 22px; background: #1e293b; color: #94a3b8; font-size: 0.65rem; text-align: center; line-height: 22px; z-index: 99; }
+    </style>
+</head>
+<body>
+
+<div class="iphone-xs-screen">
+    <header id="main-title">Alphabet Anglais</header>
+    
+    <div class="content">
+        
+        <!-- Onglet 1: Alphabet & Quiz -->
+        <div id="view-alphabet">
+            <div class="filter-bar">
+                <button class="btn-filter active" id="btn-all" onclick="filterAlphabet('all')">Tous</button>
+                <button class="btn-filter" id="btn-vow" onclick="filterAlphabet('vowel')">Voyelles</button>
+                <button class="btn-filter" id="btn-con" onclick="filterAlphabet('consonant')">Consonnes</button>
+                <button class="btn-filter btn-quiz-toggle" id="btn-quiz" onclick="toggleQuizMode()">Quiz</button>
+            </div>
+            
+            <div class="alphabet-grid" id="alphabet-container"></div>
+            
+            <div id="quiz-container" class="hidden">
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:bold; color:#64748b;">
+                    <span id="quiz-score">Score: 0</span>
+                    <span>English — Pro</span>
+                </div>
+                <div class="quiz-card">
+                    <div style="font-size:0.95rem; color:#64748b; font-weight:bold;">Comment se prononce cette lettre ?</div>
+                    <div class="quiz-question" id="quiz-letter">A</div>
+                    <div class="quiz-options" id="quiz-options-box"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Onglet 2: Formes (Maj/Min) -->
+        <div id="view-positions" class="hidden">
+            <div class="forms-container" id="forms-list-container"></div>
+        </div>
+
+        <!-- Onglet 3: NOUVEAU - Expressions, Dialogues & Mini-Dico -->
+        <div id="view-guide" class="hidden">
+            <div class="filter-bar">
+                <button class="btn-filter active" onclick="selectGuide(this, 'expr')">Expressions</button>
+                <button class="btn-filter" onclick="selectGuide(this, 'dial')">Dialogues</button>
+                <button class="btn-filter" onclick="selectGuide(this, 'minidico')">Mini-Dico</button>
+                <button class="btn-filter" onclick="selectGuide(this, 'gram')">Grammaire</button>
+            </div>
+            <div class="accent-info-text" id="guide-info-title">Phrases utiles au quotidien</div>
+            <div id="guide-content-container"></div>
+        </div>
+
+        <!-- Onglet 4: Rédacteur libre -->
+        <div id="view-editor" class="hidden">
+            <div class="word-editor-container">
+                <div class="word-toolbar">
+                    <button class="btn-word-tool" onclick="document.execCommand('bold')"><b>B</b></button>
+                    <button class="btn-word-tool" onclick="document.execCommand('italic')"><i>I</i></button>
+                    <button class="btn-word-tool" onclick="document.execCommand('underline')"><u>U</u></button>
+                    <div style="margin-left:auto; display:flex; align-items:center;">
+                        <input type="color" oninput="document.execCommand('foreColor', false, this.value)" value="#0f172a" style="width:24px; height:24px; border:none; background:none;">
+                    </div>
+                </div>
+                <div id="english-editor" class="editor-box" contenteditable="true" placeholder="Écrivez ici..."></div>
+            </div>
+            <button class="btn-action" style="margin-top:10px;" onclick="saveEditorText()">Sauvegarder</button>
+            <div id="saved-notes-container" style="margin-top:15px;"></div>
+        </div>
+
+        <!-- Onglet 5: Ajouter Vocabulaire Personnel -->
+        <div id="view-add" class="hidden">
+            <div class="form-card">
+                <input type="text" id="w-en" class="textbox" placeholder="Mot en Anglais (ex: Water)">
+                <input type="text" id="w-sens" class="textbox" placeholder="Traduction (ex: Eau)">
+                <input type="file" id="w-img" accept="image/*" class="textbox">
+                <button class="btn-action" onclick="saveWord()">Ajouter au Dico</button>
+            </div>
+            <div id="admin-delete-container"></div>
+        </div>
+
+        <!-- Onglet 6: Votre Dictionnaire Perso -->
+        <div id="view-dico" class="hidden">
+            <div class="filter-bar">
+                <button class="btn-filter active" id="btn-dico-words" onclick="toggleDicoTab('dict')">Mon Lexique</button>
+                <button class="btn-filter" id="btn-dico-notes" onclick="toggleDicoTab('zana')">Mes Notes</button>
+            </div>
+            <div class="dico-container"></div>
+        </div>
+        
+    </div>
+
+    <!-- Navigation -->
+    <nav class="taskbar">
+        <button class="task-item active" id="tab-alphabet" onclick="switchView('alphabet')">Alphabet</button>
+        <button class="task-item" id="tab-positions" onclick="switchView('positions')">Formes</button>
+        <button class="task-item" id="tab-guide" onclick="switchView('guide')">Guide App</button>
+        <button class="task-item" id="tab-editor" onclick="switchView('editor')">Rédacteur</button>
+        <button class="task-item" id="tab-add" onclick="switchView('add')">Ajouter</button>
+        <button class="task-item" id="tab-dico" onclick="switchView('dico')">Dico</button>
+    </nav>
+
+    <div class="footer-copyright">© Univers Informatique +226 74 95 81 05</div>
+</div>
+
+<script>
+    const rainbowColors = ['#ef4444', '#f97316', '#f59e0b', '#10b981', '#06b6d4', '#3b82f6', '#6366f1'];
+    function getColor(i) { return rainbowColors[i % rainbowColors.length]; }
+
+    const englishAlphabet = [
+        { letter: "A", type: "vowel", latin: "Ey", upper: "A", lower: "a" },
+        { letter: "B", type: "consonant", latin: "Bee", upper: "B", lower: "b" },
+        { letter: "C", type: "consonant", latin: "See", upper: "C", lower: "c" },
+        { letter: "D", type: "consonant", latin: "Dee", upper: "D", lower: "d" },
+        { letter: "E", type: "vowel", latin: "Ee", upper: "E", lower: "e" },
+        { letter: "F", type: "consonant", latin: "Ef", upper: "F", lower: "f" },
+        { letter: "G", type: "consonant", latin: "Djee", upper: "G", lower: "g" },
+        { letter: "H", type: "consonant", latin: "Eytch", upper: "H", lower: "h" },
+        { letter: "I", type: "vowel", latin: "Ay", upper: "I", lower: "i" },
+        { letter: "J", type: "consonant", latin: "Djey", upper: "J", lower: "j" },
+        { letter: "K", type: "consonant", latin: "Key", upper: "K", lower: "k" },
+        { letter: "L", type: "consonant", latin: "El", upper: "L", lower: "l" },
+        { letter: "M", type: "consonant", latin: "Em", upper: "M", lower: "m" },
+        { letter: "N", type: "consonant", latin: "En", upper: "N", lower: "n" },
+        { letter: "O", type: "vowel", latin: "Ow", upper: "O", lower: "o" },
+        { letter: "P", type: "consonant", latin: "Pee", upper: "P", lower: "p" },
+        { letter: "Q", type: "consonant", latin: "Kyou", upper: "Q", lower: "q" },
+        { letter: "R", type: "consonant", latin: "Ahr", upper: "R", lower: "r" },
+        { letter: "S", type: "consonant", latin: "Es", upper: "S", lower: "s" },
+        { letter: "T", type: "consonant", latin: "Tee", upper: "T", lower: "t" },
+        { letter: "U", type: "vowel", latin: "You", upper: "U", lower: "u" },
+        { letter: "V", type: "consonant", latin: "Vee", upper: "V", lower: "v" },
+        { letter: "W", type: "consonant", latin: "Dabeelyou", upper: "W", lower: "w" },
+        { letter: "X", type: "consonant", latin: "Eks", upper: "X", lower: "x" },
+        { letter: "Y", type: "vowel", latin: "Ouay", upper: "Y", lower: "y" },
+        { letter: "Z", type: "consonant", latin: "Zed / Zee", upper: "Z", lower: "z" }
+    ];
+
+    // NOUVELLES DONNÉES : EXPRESSIONS, DIALOGUES ET MINI-DICO FIXE
+    const guideData = {
+        expr: [
+            { en: "Good morning / Hello", fr: "Bonjour" },
+            { en: "How are you?", fr: "Comment vas-tu ?" },
+            { en: "I am fine, thank you.", fr: "Je vais bien, merci." },
+            { en: "Nice to meet you.", fr: "Ravi de vous rencontrer." },
+            { en: "Please / Thank you very much", fr: "S'il vous plaît / Merci beaucoup" },
+            { en: "Where is the restroom?", fr: "Où sont les toilettes ?" },
+            { en: "How much does this cost?", fr: "Combien ça coûte ?" }
+        ],
+        dial: [
+            { type: "chat", speaker: "John", side: "left", en: "Hi! My name is John. What is your name?", fr: "Salut ! Je m'appelle John. Comment t'appelles-tu ?" },
+            { type: "chat", speaker: "Sarah", side: "right", en: "Hello John! I am Sarah. Where are you from?", fr: "Bonjour John ! Je suis Sarah. D'où viens-tu ?" },
+            { type: "chat", speaker: "John", side: "left", en: "I am from New York. And you?", fr: "Je viens de New York. Et toi ?" },
+            { type: "chat", speaker: "Sarah", side: "right", en: "I am from Paris. Nice to meet you!", fr: "Je viens de Paris. Ravi de te rencontrer !" }
+        ],
+        minidico: [
+            { th: "🍉 Nourriture", en: "Bread / Water / Apple", fr: "Pain / Eau / Pomme" },
+            { th: "🏠 Famille", en: "Father / Mother / Brother", fr: "Père / Mère / Frère" },
+            { th: "✈️ Voyage", en: "Airport / Hotel / Car", fr: "Aéroport / Hôtel / Voiture" },
+            { th: "⏰ Temps", en: "Today / Tomorrow / Yesterday", fr: "Aujourd'hui / Demain / Hier" }
+        ],
+        gram: [
+            { en: "I am / You are / He is", fr: "Je suis / Tu es / Il est (Verbe Être)" },
+            { en: "I have / You have / He has", fr: "J'ai / Tu as / Il a (Verbe Avoir)" }
+        ]
+    };
+
+    let isQuizMode = false;
+    let quizScore = 0;
+    let currentQuizLetter = null;
+    let currentDicoView = 'dict';
+
+    window.onload = () => {
+        renderAlphabet('all');
+        renderFormsTable();
+        renderGuideBlocks('expr');
+    };
+
+    function renderAlphabet(filter) {
+        const container = document.getElementById('alphabet-container');
+        const items = filter === 'all' ? englishAlphabet : englishAlphabet.filter(i => i.type === filter);
+        container.innerHTML = items.map((item, idx) => `
+            <div class="mini-card">
+                <span class="letter-main" style="color: ${getColor(idx)};">${item.letter}</span>
+                <span class="letter-pron">${item.latin}</span>
+            </div>
+        `).join('');
+    }
+
+    function renderFormsTable() {
+        document.getElementById('forms-list-container').innerHTML = englishAlphabet.map((item, idx) => `
+            <div class="form-card-row" style="border-left: 4px solid ${getColor(idx)};">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:bold;">
+                    <span style="color:var(--primary);">Lettre ${item.letter}</span>
+                    <span style="color:#64748b; font-size:0.9rem;">Sonne: ${item.latin}</span>
+                </div>
+                <div class="cases-row">
+                    <div class="case-box"><span class="case-label">Majuscule</span><span class="case-glyph">${item.upper}</span></div>
+                    <div class="case-box"><span class="case-label">Minuscule</span><span class="case-glyph">${item.lower}</span></div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // FONCTION POUR AFFICHER LES EXPRESSIONS / DIALOGUES / MINI-DICO
+    function renderGuideBlocks(key) {
+        const container = document.getElementById('guide-content-container');
+        const data = guideData[key] || [];
+
+        if (key === 'dial') {
+            container.innerHTML = `<div class="chat-container">` + data.map(item => `
+                <div class="bubble ${item.side}">
+                    <span class="speaker">${item.speaker}</span>
+                    <b>${item.en}</b>
+                    <span class="translation">${item.fr}</span>
+                </div>
+            `).join('') + `</div>`;
+        } else if (key === 'minidico') {
+            container.innerHTML = data.map(item => `
+                <div class="form-card-row" style="border-left: 4px solid #10b981;">
+                    <div style="font-weight:bold; color:#0f172a; margin-bottom:4px;">${item.th}</div>
+                    <div style="font-size:1.2rem; font-weight:bold; color:var(--primary);">${item.en}</div>
+                    <div style="font-size:0.95rem; color:#64748b;">${item.fr}</div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = data.map(item => `
+                <div class="form-card-row" style="border-left: 4px solid var(--primary); padding:12px;">
+                    <div style="font-size:1.15rem; font-weight:bold; color:#0f172a;">${item.en}</div>
+                    <div style="font-size:0.95rem; color:#64748b; margin-top:2px;">${item.fr}</div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function selectGuide(btn, key) {
+        btn.parentElement.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const titles = { expr: "Phrases utiles au quotidien", dial: "Dialogue : Faire connaissance", minidico: "Vocabulaire thématique de base", gram: "Règles grammaticales de base" };
+        document.getElementById('guide-info-title').innerText = titles[key];
+        renderGuideBlocks(key);
+    }
+
+    // GESTION DU QUIZ
+    function toggleQuizMode() {
+        isQuizMode = !isQuizMode;
+        const grid = document.getElementById('alphabet-container');
+        const quizBox = document.getElementById('quiz-container');
+        const quizBtn = document.getElementById('btn-quiz');
+        document.querySelectorAll('#view-alphabet .btn-filter').forEach(b => b.classList.remove('active'));
+
+        if(isQuizMode) {
+            grid.classList.add('hidden'); quizBox.classList.remove('hidden'); quizBtn.classList.add('active');
+            quizScore = 0; updateScoreDisplay(); generateNextQuizQuestion();
+        } else {
+            grid.classList.remove('hidden'); quizBox.classList.add('hidden'); quizBtn.classList.remove('active');
+            document.getElementById('btn-all').classList.add('active'); renderAlphabet('all');
+        }
+    }
+
+    function generateNextQuizQuestion() {
+        const idx = Math.floor(Math.random() * englishAlphabet.length);
+        currentQuizLetter = englishAlphabet[idx];
+        document.getElementById('quiz-letter').innerText = currentQuizLetter.letter;
+        document.getElementById('quiz-letter').style.color = getColor(idx);
+
+        let choices = [currentQuizLetter.latin];
+        while(choices.length < 4) {
+            let choice = englishAlphabet[Math.floor(Math.random() * englishAlphabet.length)].latin;
+            if(!choices.includes(choice)) choices.push(choice);
+        }
+        choices.sort(() => Math.random() - 0.5);
+        document.getElementById('quiz-options-box').innerHTML = choices.map(c => `<button class="btn-option" onclick="verifyQuizAnswer('${c}', this)">${c}</button>`).join('');
+    }
+
+    function verifyQuizAnswer(sel, btn) {
+        if(sel === currentQuizLetter.latin) {
+            quizScore++; btn.style.background = "#d1fae5"; updateScoreDisplay();
+            setTimeout(() => { generateNextQuizQuestion(); }, 600);
+        } else {
+            btn.style.background = "#fee2e2";
+            alert(`Oups! La bonne réponse était : ${currentQuizLetter.latin}`);
+            generateNextQuizQuestion();
+        }
+    }
+
+    function updateScoreDisplay() { document.getElementById('quiz-score').innerText = `Score: ${quizScore}`; }
+
+    function filterAlphabet(type) {
+        if(isQuizMode) toggleQuizMode();
+        document.querySelectorAll('#view-alphabet .btn-filter').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-' + (type==='all'?'all':type==='vowel'?'vow':'con')).classList.add('active');
+        renderAlphabet(type);
+    }
+
+    // SAUVEGARDE DE TEXTES / DOCUMENTS
+    function getSavedNotes() { return JSON.parse(localStorage.getItem('english_notes')) || []; }
+    function saveEditorText() {
+        const ed = document.getElementById('english-editor');
+        if (!ed.innerText.trim()) return alert("Écrivez un texte d'abord.");
+        const notes = getSavedNotes();
+        const now = new Date();
+        notes.unshift({ html: ed.innerHTML, date: `${now.getDate()}/${now.getMonth()+1} à ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}` });
+        localStorage.setItem('english_notes', JSON.stringify(notes));
+        ed.innerHTML = ""; renderSavedNotes(); alert("Texte enregistré !");
+    }
+
+    function renderSavedNotes() {
+        const container = document.getElementById('saved-notes-container');
+        const notes = getSavedNotes();
+        if(notes.length === 0) { container.innerHTML = `<p style="text-align:center;color:#64748b;">Aucune note enregistrée.</p>`; return; }
+        container.innerHTML = notes.map((n, i) => `
+            <div class="note-paper">
+                <div style="font-size:0.75rem; color:#64748b; font-weight:bold;">Document du ${n.date}</div>
+                <div>${n.html}</div>
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:5px;">
+                    <button class="btn-note-opt btn-load" onclick="document.getElementById('english-editor').innerHTML=\`${n.html}\`; switchView('editor');">Charger</button>
+                    <button class="btn-note-opt btn-trash" onclick="const ns=getSavedNotes(); ns.splice(${i},1); localStorage.setItem('english_notes',JSON.stringify(ns)); renderSavedNotes();">Supprimer</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // DICTIONNAIRE PERSONNALISÉ
+    function getDico() { return JSON.parse(localStorage.getItem('english_dict')) || []; }
+    function saveWord() {
+        const en = document.getElementById('w-en'), sens = document.getElementById('w-sens'), img = document.getElementById('w-img');
+        if(!en.value.trim() || !sens.value.trim()) return alert("Remplissez les champs requis.");
+
+        const save = (base64 = "") => {
+            const d = getDico(); d.unshift({ en: en.value.trim(), sens: sens.value.trim(), img: base64 });
+            localStorage.setItem('english_dict', JSON.stringify(d));
+            en.value = ""; sens.value = ""; img.value = ""; renderAdminDelete(); alert("Mot ajouté !");
+        };
+
+        if(img.files && img.files[0]) {
+            const r = new FileReader(); r.onload = (e) => save(e.target.result); r.readAsDataURL(img.files[0]);
+        } else { save(""); }
+    }
+
+    function renderDico() {
+        const container = document.querySelector('.dico-container');
+        const data = getDico();
+        if(data.length === 0) { container.innerHTML = `<p style="text-align:center;color:#64748b;">Votre lexique est vide.</p>`; return; }
+        container.innerHTML = data.map(item => `
+            <div class="word-item">
+                <div class="word-row">
+                    <div class="word-col"><span class="word-english">${item.en}</span></div>
+                    <div class="word-col" style="border-left:2px solid #f1f5f9;"><span class="word-sens">${item.sens}</span></div>
+                </div>
+                ${item.img ? `<div style="text-align:center;"><img src="${item.img}" class="word-thumb"></div>` : ''}
+            </div>
+        `).join('');
+    }
+
+    function renderAdminDelete() {
+        document.getElementById('admin-delete-container').innerHTML = getDico().map((item, idx) => `
+            <div class="word-item">
+                <div class="word-row">
+                    <span class="word-english" style="font-size:1.2rem;">${item.en}</span>
+                    <button class="btn-delete" onclick="const d=getDico(); d.splice(${idx},1); localStorage.setItem('english_dict',JSON.stringify(d)); renderAdminDelete();">Supprimer</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function toggleDicoTab(tab) {
+        currentDicoView = tab;
+        document.getElementById('btn-dico-words').classList.toggle('active', tab === 'dict');
+        document.getElementById('btn-dico-notes').classList.toggle('active', tab === 'zana');
+        if(tab === 'dict') renderDico(); else renderSavedNotesInDico();
+    }
+
+    function renderSavedNotesInDico() {
+        const container = document.querySelector('.dico-container');
+        const notes = getSavedNotes();
+        if(notes.length === 0) { container.innerHTML = `<p style="text-align:center;color:#64748b;">Aucune note rédigée.</p>`; return; }
+        container.innerHTML = notes.map(n => `<div class="word-item"><small>${n.date}</small><div>${n.html}</div></div>`).join('');
+    }
+
+    // SYSTEME DE VUES
+    function switchView(view) {
+        const views = ['alphabet', 'positions', 'guide', 'editor', 'add', 'dico'];
+        views.forEach(v => document.getElementById('view-' + v).classList.toggle('hidden', v !== view));
+        document.querySelectorAll('.taskbar .task-item').forEach(item => item.classList.remove('active'));
+        if(document.getElementById('tab-' + view)) document.getElementById('tab-' + view).classList.add('active');
+
+        const headers = { alphabet: "Alphabet Anglais", positions: "Formes & Cas", guide: "Guide d'Apprentissage", editor: "Espace Rédacteur", add: "Ajouter Vocabulaire", dico: "Dictionnaire & Notes" };
+        document.getElementById('main-title').innerText = headers[view];
+
+        if(view === 'dico') toggleDicoTab(currentDicoView);
+        if(view === 'add') renderAdminDelete();
+        if(view === 'editor') renderSavedNotes();
+    }
+</script>
+</body>
+</html>
