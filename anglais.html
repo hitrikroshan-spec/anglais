@@ -81,8 +81,6 @@
         .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
         .btn-filter { flex: 1; min-width: 70px; background: white; border: 1px solid #e2e8f0; padding: 10px; border-radius: 12px; font-weight: 600; font-size: 0.8rem; cursor: pointer; color: #64748b; transition: all 0.2s; }
         .btn-filter.active { background: var(--primary); color: white; border: none; box-shadow: 0 4px 6px -1px var(--primary-light); }
-        .btn-quiz-toggle { background: #f59e0b; color: white; border: none; }
-        .btn-quiz-toggle.active { background: #d97706; }
 
         .alphabet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
         .mini-card { background: white; border-radius: 20px; border: 1px solid #e2e8f0; text-align: center; padding: 15px; transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
@@ -105,8 +103,10 @@
         .btn-option { background: #f8fafc; border: 2px solid #e2e8f0; padding: 16px; border-radius: 16px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
         .btn-option:active { background: #e0e7ff; border-color: var(--primary); }
         
-        /* Modifié pour flux normal */
-        .nav-buttons-bottom { display: flex; gap: 10px; margin-top: 20px; }
+        /* Sticky Header pour Expression */
+        #expr-sticky-header { position: sticky; top: 0; background: var(--bg); padding-bottom: 10px; z-index: 10; }
+        .nav-buttons-bottom { display: flex; gap: 10px; margin-top: 10px; }
+        .expr-select { width: 100%; padding: 10px; margin-top: 10px; border-radius: 12px; border: 1px solid #e2e8f0; background: white; font-weight: 600; color: var(--primary); }
 
         .word-editor-container { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 16px; overflow: hidden; }
         .word-toolbar { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 8px; display: flex; gap: 4px; }
@@ -147,37 +147,37 @@
                 <button class="btn-filter active" id="btn-all" onclick="filterAlphabet('all')">Tous</button>
                 <button class="btn-filter" id="btn-vow" onclick="filterAlphabet('vowel')">Voyelles</button>
                 <button class="btn-filter" id="btn-con" onclick="filterAlphabet('consonant')">Consonnes</button>
-                <button class="btn-filter btn-quiz-toggle" id="btn-quiz" onclick="toggleQuizMode()">Quiz</button>
             </div>
-            
             <div class="alphabet-grid" id="alphabet-container"></div>
-            
-            <div id="quiz-container" class="hidden">
+        </div>
+
+        <div id="view-quiz" class="hidden">
+            <div class="quiz-card">
                 <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:800; color:#64748b;">
                     <span id="quiz-score">Score: 0</span>
                     <span id="quiz-level">Niveau: 1</span>
                 </div>
-                <div class="quiz-card">
-                    <div style="font-size:0.9rem; color:#94a3b8; font-weight:700; text-transform:uppercase;">Quelle est la traduction de :</div>
-                    <div class="quiz-question" id="quiz-expression">...</div>
-                    <div class="quiz-options" id="quiz-options-box"></div>
-                </div>
+                <div style="font-size:0.9rem; color:#94a3b8; font-weight:700; text-transform:uppercase;">Quelle est la traduction de :</div>
+                <div class="quiz-question" id="quiz-expression">...</div>
+                <div class="quiz-options" id="quiz-options-box"></div>
             </div>
         </div>
 
         <div id="view-expr" class="hidden">
-            <div id="expr-anim-container" class="quiz-card">
-                <div style="font-size:0.8rem; color:#94a3b8; font-weight:700; margin-bottom:10px; text-transform:uppercase;">Traduction :</div>
-                <div id="expr-fr" style="font-size: 1.1rem; margin-bottom:10px; font-weight:600;">...</div>
-                <div id="expr-en" class="quiz-question" style="font-size: 2rem;">...</div>
+            <div id="expr-sticky-header">
+                <div id="expr-anim-container" class="quiz-card">
+                    <div style="font-size:0.8rem; color:#94a3b8; font-weight:700; margin-bottom:10px; text-transform:uppercase;">Traduction :</div>
+                    <div id="expr-fr" style="font-size: 1.1rem; margin-bottom:10px; font-weight:600;">...</div>
+                    <div id="expr-en" class="quiz-question" style="font-size: 2rem;">...</div>
+                </div>
+                <div class="nav-buttons-bottom">
+                    <button class="btn-action" style="background:#64748b;" onclick="handleNav('prev')">Précédent</button>
+                    <button class="btn-action" onclick="handleNav('next')">Suivant</button>
+                </div>
+                <select id="expr-select" class="expr-select" onchange="showExpr(this.value)">
+                </select>
             </div>
-            <div class="nav-buttons-bottom">
-                <button class="btn-action" style="background:#64748b;" onclick="handleNav('prev')">Précédent</button>
-                <button class="btn-action" onclick="handleNav('next')">Suivant</button>
-            </div>
-            <div id="expr-list-container" style="margin-top: 30px;">
-                <h4 style="color:var(--primary);">Liste des expressions :</h4>
-            </div>
+            <div id="expr-list-container" style="margin-top: 20px;"></div>
         </div>
 
         <div id="view-guide" class="hidden">
@@ -230,6 +230,7 @@
     <nav class="taskbar">
         <button class="task-item active" id="tab-alphabet" onclick="switchView('alphabet')">Alphabet</button>
         <button class="task-item" id="tab-expr" onclick="switchView('expr')">Expressions</button>
+        <button class="task-item" id="tab-quiz" onclick="switchView('quiz')">Quiz</button>
         <button class="task-item" id="tab-guide" onclick="switchView('guide')">Guide</button>
         <button class="task-item" id="tab-editor" onclick="switchView('editor')">Rédacteur</button>
         <button class="task-item" id="tab-add" onclick="switchView('add')">Ajouter</button>
@@ -326,44 +327,30 @@
         ]
     };
 
-    let isQuizMode = false, quizScore = 0, currentQuizLevel = 1, currentQuizExpr = null, currentDicoView = 'dict';
+    let quizScore = 0, currentQuizLevel = 1, currentQuizExpr = null, currentDicoView = 'dict';
 
-    // Rendu initial de la liste
     window.onload = () => { 
         renderAlphabet('all'); 
         renderGuideBlocks('dial'); 
         showExpr(0); 
-        renderAllExprList(); // <--- Nouvelle fonction appelée ici
+        renderAllExprList(); 
     };
 
     function renderAllExprList() {
-        const container = document.getElementById('expr-list-container');
-        container.innerHTML = `<h4 style="color:var(--primary); margin-bottom:10px;">Liste des expressions :</h4>` + 
-        guideData.expr.map((item, idx) => `
-            <div class="form-card-row" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center; padding: 10px;" onclick="showExpr(${idx})">
-                <span style="font-weight:700;">${item.en}</span>
-                <span style="font-size:0.8rem; color:#64748b;">${item.fr}</span>
-            </div>
-        `).join('');
+        const select = document.getElementById('expr-select');
+        select.innerHTML = guideData.expr.map((item, idx) => `<option value="${idx}">${item.en} - ${item.fr}</option>`).join('');
     }
 
     function handleNav(dir) {
-        const anim = dir === 'next' ? 'animate-next' : 'animate-prev';
-        const container = document.getElementById('expr-anim-container');
-        container.classList.remove('animate-next', 'animate-prev');
-        void container.offsetWidth; 
-        container.classList.add(anim);
-        
         if(dir === 'next') nextExpr(); else prevExpr();
     }
 
     function showExpr(idx) {
-        currentExprIndex = idx;
+        currentExprIndex = parseInt(idx);
         const data = guideData.expr[currentExprIndex];
         document.getElementById('expr-fr').innerText = data.fr;
         document.getElementById('expr-en').innerText = data.en;
-        // Scroll automatique vers le haut si nécessaire pour bien voir la carte
-        document.querySelector('.content').scrollTop = 0;
+        document.getElementById('expr-select').value = currentExprIndex;
     }
     function nextExpr() { if(currentExprIndex < guideData.expr.length - 1) showExpr(currentExprIndex + 1); }
     function prevExpr() { if(currentExprIndex > 0) showExpr(currentExprIndex - 1); }
@@ -416,20 +403,8 @@
         renderGuideBlocks(key);
     }
 
-    function toggleQuizMode() {
-        isQuizMode = !isQuizMode;
-        const grid = document.getElementById('alphabet-container');
-        const quizBox = document.getElementById('quiz-container');
-        const quizBtn = document.getElementById('btn-quiz');
-        if(isQuizMode) switchView('alphabet');
-        document.querySelectorAll('#view-alphabet .btn-filter').forEach(b => b.classList.remove('active'));
-        if(isQuizMode) {
-            grid.classList.add('hidden'); quizBox.classList.remove('hidden'); if(quizBtn) quizBtn.classList.add('active');
-            quizScore = 0; currentQuizLevel = 1; updateQuizUI(); generateNextQuizQuestion();
-        } else {
-            grid.classList.remove('hidden'); quizBox.classList.add('hidden'); if(quizBtn) quizBtn.classList.remove('active');
-            document.getElementById('btn-all').classList.add('active'); renderAlphabet('all');
-        }
+    function startQuiz() {
+        quizScore = 0; currentQuizLevel = 1; updateQuizUI(); generateNextQuizQuestion();
     }
 
     function generateNextQuizQuestion() {
@@ -456,7 +431,7 @@
     }
 
     function updateQuizUI() { document.getElementById('quiz-score').innerText = `Score: ${quizScore}`; document.getElementById('quiz-level').innerText = `Niveau: ${currentQuizLevel}`; }
-    function filterAlphabet(type) { if(isQuizMode) toggleQuizMode(); document.querySelectorAll('#view-alphabet .btn-filter').forEach(b => b.classList.remove('active')); document.getElementById('btn-' + (type==='all'?'all':type==='vowel'?'vow':'con')).classList.add('active'); renderAlphabet(type); }
+    function filterAlphabet(type) { document.querySelectorAll('#view-alphabet .btn-filter').forEach(b => b.classList.remove('active')); document.getElementById('btn-' + (type==='all'?'all':type==='vowel'?'vow':'con')).classList.add('active'); renderAlphabet(type); }
     function getSavedNotes() { return JSON.parse(localStorage.getItem('english_notes')) || []; }
     function saveEditorText() {
         const ed = document.getElementById('english-editor');
@@ -506,15 +481,16 @@
     }
 
     function switchView(view) {
-        const views = ['alphabet', 'expr', 'guide', 'editor', 'add', 'dico'];
-        views.forEach(v => document.getElementById('view-' + v).classList.toggle('hidden', v !== view));
+        const views = ['alphabet', 'expr', 'guide', 'editor', 'add', 'dico', 'quiz'];
+        views.forEach(v => document.getElementById('view-' + v)?.classList.toggle('hidden', v !== view));
         document.querySelectorAll('.taskbar .task-item').forEach(item => item.classList.remove('active'));
         if(document.getElementById('tab-' + view)) document.getElementById('tab-' + view).classList.add('active');
-        const headers = { alphabet: "Alphabet Anglais", expr: "Expressions", guide: "Guide d'Apprentissage", editor: "Espace Rédacteur", add: "Ajouter Vocabulaire", dico: "Dictionnaire & Notes" };
+        const headers = { alphabet: "Alphabet Anglais", expr: "Expressions", guide: "Guide d'Apprentissage", editor: "Espace Rédacteur", add: "Ajouter Vocabulaire", dico: "Dictionnaire & Notes", quiz: "Quiz" };
         document.getElementById('main-title').innerText = headers[view];
         if(view === 'dico') toggleDicoTab(currentDicoView);
         if(view === 'add') renderAdminDelete();
         if(view === 'editor') renderSavedNotes();
+        if(view === 'quiz') startQuiz();
     }
 </script>
 </body>
